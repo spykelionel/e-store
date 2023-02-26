@@ -587,23 +587,34 @@ SHOW WARNINGS;
 -- -----------------------------------------------------
 -- Table `estore`.`user_order`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `estore`.`user_order`;
 CREATE TABLE IF NOT EXISTS `estore`.`user_order` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `user_order_id` VARCHAR(50) NOT NULL,
   `system_user_id` VARCHAR(50) NOT NULL,
+  `payment_detail_id` VARCHAR(50) NOT NULL,
   `cart_id` VARCHAR(50) NOT NULL,
-  `status` ENUM('payed', 'pending') NOT NULL DEFAULT 'pending',
+  `location_id` VARCHAR(50) NOT NULL,
+  `payment_status` ENUM('PAYED', 'PENDING') NOT NULL DEFAULT 'PENDING',
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `id` (`id` ASC) VISIBLE,
   UNIQUE INDEX `user_order_id` (`user_order_id` ASC) VISIBLE,
-  INDEX `FK_system_user_user_oder` (`system_user_id` ASC) VISIBLE,
+  INDEX `FK_system_user_user_order` (`system_user_id` ASC) VISIBLE,
   INDEX `FK_cart_user_order` (`cart_id` ASC) VISIBLE,
+  INDEX `FK_order_payment_detail` (`payment_detail_id` ASC) VISIBLE,
+  INDEX `FK_order_user_location` (`location_id` ASC) VISIBLE,
+  CONSTRAINT `FK_order_user_location`
+    FOREIGN KEY (`location_id`)
+    REFERENCES `estore`.`location` (`location_id`),
+  CONSTRAINT `FK_order_payment_detail`
+    FOREIGN KEY (`payment_detail_id`)
+    REFERENCES `estore`.`payment_detail` (`payment_detail_id`),
   CONSTRAINT `FK_cart_user_order`
     FOREIGN KEY (`cart_id`)
-    REFERENCES `estore`.`cart` (`cart_id`),
-  CONSTRAINT `FK_system_user_user_oder`
+	REFERENCES `estore`.`cart` (`cart_id`),
+  CONSTRAINT `FK_system_user_user_order`
     FOREIGN KEY (`system_user_id`)
     REFERENCES `estore`.`system_user` (`system_user_id`))
 ENGINE = InnoDB
